@@ -2,10 +2,12 @@
 contains some REST service to provide cloud access to some data to be used for our App
 - deployed on openshift: http://tomcat7-focusdays2015.rhcloud.com/
 
-#REST API
+#REST API 
+
 http://tomcat7-focusdays2015.rhcloud.com/rest/store/objects
 - get all objects
-- exmple
+- get all 
+- example
 
 ```json
   [    {    {
@@ -18,27 +20,33 @@ http://tomcat7-focusdays2015.rhcloud.com/rest/store/objects
       price-current: "450",
       currency: "EUR",
       category: "Electonics"
-      coverage: [
+      coverage-test: [
         {
-          location: "at-home",
-          risk: "fire",
-          covered: "no",
-          description: "bla bla bla",
-          options: [
-            {
-              title: "standard coverage",
-              price: "45",
-              current: "EUR",
-              description: "add standard risks"
-            },
-            {
-              title: "extended coverage",
-              price: "70",
-              current: "EUR",
-              description: "add all possible fire risks"
-            }
+          date: "28.06.2015",
+          time: "23:00:02",
+          result: [
+              {
+                location: "at-home",
+                risk: "fire",
+                covered: "no",
+                description: "bla bla bla",
+                options: [
+                  {
+                    title: "standard coverage",
+                    price: "45",
+                    current: "EUR",
+                    description: "add standard risks"
+                  },
+                  {
+                    title: "extended coverage",
+                    price: "70",
+                    current: "EUR",
+                    description: "add all possible fire risks"
+                  }
+                ]
+              }
           ]
-        },
+        }
       ]
     },
     {
@@ -50,3 +58,7 @@ http://tomcat7-focusdays2015.rhcloud.com/rest/store/objects
     }
 ]
 ```
+
+http://tomcat7-focusdays2015.rhcloud.com/rest/store/object/<id>
+- get object with id = <id>
+- including all coverage details
