@@ -1,12 +1,17 @@
 package com.focusdays2015.eyes2drive.model;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.text.DateFormatter;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -34,6 +39,8 @@ import org.jboss.resteasy.annotations.providers.jaxb.json.BadgerFish;
 public class Accounts implements JSONObject {
 
 	private static Map<String, Account> STORE = new HashMap<String, Account>();
+	private static Map<String, Device> DEVICES = new HashMap<String, Device>();
+	
 	static {
 		Account lolo = new Account("1", "lorenz.haenggi@bluewin.ch", "Lolo");
 		Account doris = new Account("20", "doris2502@hotmail.com", "Didi");
@@ -49,14 +56,76 @@ public class Accounts implements JSONObject {
 		t.getLastEvents().add(e2);
 		lolo.getLastEvents().add(e2);
 
-		
-		
 		STORE.put(lolo.getId(), lolo);
 		STORE.put(doris.getId(), doris);
+		
+		
+		Device d = new Device();
+		d.setDeviceId("111111");
+		d.setCreatedNow();
+		DEVICES.put(d.getDeviceId(), d);
 	}
 
 	public Accounts() {
 	}
+	
+
+	@GET
+	@Path("/devices")
+	public Response getDevices() {
+		StringBuffer b = new StringBuffer();
+		b.append("[");
+		boolean first = true;
+		for (Entry<String, Device> v : DEVICES.entrySet()) {
+			if (first) {
+				b.append(v.getValue().toJSON());
+				first = false;
+			} else {
+				b.append(",");
+				b.append(v.getValue().toJSON());
+			}
+		}
+		b.append("]");
+		return Response.status(Status.OK).entity(b.toString()).build();
+	}
+
+	@GET
+	@Path("/device/{id}")
+	public Response getDevice(@PathParam("id") String id) {
+		Device d = DEVICES.get(id);
+		if (d != null) {
+			return Response.status(Status.OK).entity(d.toJSON()).build();
+		} else {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+	}
+
+	@PUT
+	@Path("/device/{id}")
+	public Response addDevice(@PathParam("id") String id) {
+		Device d = DEVICES.get(id);
+		if (d == null) {
+			d = new Device();
+			d.setDeviceId(id);
+			d.setCreatedNow();
+			DEVICES.put(id, d);
+		}
+		return Response.status(Status.OK).entity(d.toJSON()).build();
+	}
+	
+	
+
+	@DELETE
+	@Path("/device/{id}")
+	public void deleteDevice(@PathParam("id") String id) {
+		Device removedDevice = DEVICES.remove(id);
+		if (removedDevice == null) {
+			throw new NotFoundException();
+		}
+	}
+	
+	
+	
 
 	@GET
 	@Path("/accounts")
@@ -130,5 +199,7 @@ public class Accounts implements JSONObject {
 		b.append("]");
 		return b.toString();
 	}
+	
+	
 
 }
